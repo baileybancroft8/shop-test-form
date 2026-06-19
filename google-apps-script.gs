@@ -78,7 +78,15 @@ function doPost(e) {
   }
 }
 
-/** Run this once from the editor to format the header straight away. */
+/** Lets you test the endpoint by opening its URL in a browser.
+ *  If you see {"status":"ok"} the web app is publicly reachable.
+ *  If you see a Google sign-in page instead, the deployment is
+ *  restricted to your organisation — re-deploy with access "Anyone". */
+function doGet() {
+  return ok({ status: 'ok' });
+}
+
+/** Run this once from the editor to name + format the tab straight away. */
 function setupSheet() {
   formatHeader_(getSheet_());
 }
@@ -90,7 +98,13 @@ function clean_(v, max) {
 
 function getSheet_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  return SHEET_NAME ? ss.getSheetByName(SHEET_NAME) : ss.getSheets()[0];
+  if (SHEET_NAME) return ss.getSheetByName(SHEET_NAME);
+  var sheet = ss.getSheetByName('Submissions');
+  if (!sheet) {
+    sheet = ss.getSheets()[0];
+    sheet.setName('Submissions');
+  }
+  return sheet;
 }
 
 /** Bold, dark, frozen, easy-to-read header row. */
