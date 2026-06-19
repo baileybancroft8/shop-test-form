@@ -378,6 +378,10 @@
       width: 100%;
       margin-top: 16px;
       padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
       font-size: 15.5px;
       font-weight: 600;
       letter-spacing: 0.2px;
@@ -396,17 +400,102 @@
       box-shadow: 0 12px 26px -8px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.12) inset;
     }
     .submit-btn:active { transform: translateY(0); filter: brightness(0.95); }
+    .submit-btn:disabled { cursor: default; }
+    .submit-btn:disabled:hover { transform: none; filter: none; }
 
+    /* button content swaps between label and spinner */
+    .submit-btn .btn-label {
+      display: inline-block;
+      transition: opacity .2s ease;
+    }
+    .submit-btn .btn-spinner {
+      display: none;
+      width: 19px;
+      height: 19px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    .submit-btn.loading .btn-label { display: none; }
+    .submit-btn.loading .btn-spinner { display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* form gracefully clears out on success */
+    #signup-form {
+      transition: opacity .4s ease, transform .45s cubic-bezier(.22,.61,.36,1);
+    }
+    #signup-form.submitting { pointer-events: none; }
+    #signup-form.done {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+
+    /* success panel — overlays the card so its height stays stable */
     .success {
       display: none;
-      margin-top: 18px;
-      padding: 13px 16px;
-      background: var(--blue-light);
-      border-left: 3px solid var(--blue);
-      border-radius: 4px;
-      font-size: 14px;
-      color: #1a3a6b;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 0 28px;
     }
+    .success.show { display: flex; }
+    .success-ring {
+      width: 76px;
+      height: 76px;
+      margin-bottom: 22px;
+    }
+    .success-ring circle {
+      fill: none;
+      stroke: var(--blue);
+      stroke-width: 4;
+      stroke-dasharray: 226;
+      stroke-dashoffset: 226;
+    }
+    .success-ring path {
+      fill: none;
+      stroke: var(--blue);
+      stroke-width: 5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 60;
+      stroke-dashoffset: 60;
+    }
+    .success.show .success-ring circle {
+      animation: ring-draw .55s cubic-bezier(.65,0,.45,1) forwards;
+    }
+    .success.show .success-ring path {
+      animation: check-draw .35s cubic-bezier(.65,0,.45,1) .5s forwards;
+    }
+    @keyframes ring-draw { to { stroke-dashoffset: 0; } }
+    @keyframes check-draw { to { stroke-dashoffset: 0; } }
+
+    .success-title {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      color: var(--black);
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    .success-text {
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--gray);
+      max-width: 320px;
+      margin-top: 8px;
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    .success.show .success-title { animation: rise .5s ease .65s forwards; }
+    .success.show .success-text  { animation: rise .5s ease .8s forwards; }
+    @keyframes rise { to { opacity: 1; transform: translateY(0); } }
 
     /* ---------- FAQ ---------- */
     .faq {
@@ -654,12 +743,23 @@
           </label>
         </div>
 
-        <button type="submit" class="submit-btn">Submit</button>
-
-        <div class="success" id="success">
-          Thank you — your interest has been registered. We&rsquo;ll be in touch shortly.
-        </div>
+        <button type="submit" class="submit-btn" id="submit-btn">
+          <span class="btn-label">Submit</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
       </form>
+
+      <div class="success" id="success">
+        <svg class="success-ring" viewBox="0 0 80 80" aria-hidden="true">
+          <circle cx="40" cy="40" r="36" />
+          <path d="M25 41.5 L36 52 L56 30" />
+        </svg>
+        <div class="success-title">Thank you!</div>
+        <div class="success-text">
+          Your interest has been registered. We&rsquo;ll be in touch shortly with
+          next steps.
+        </div>
+      </div>
     </div>
     </div>
   </main>
@@ -800,9 +900,21 @@
         trigger.focus();
         return;
       }
-      success.style.display = 'block';
-      form.querySelector('.submit-btn').textContent = 'Submitted';
-      form.querySelector('.submit-btn').disabled = true;
+
+      const btn = document.getElementById('submit-btn');
+
+      // 1) show spinner / loading state
+      btn.classList.add('loading');
+      btn.disabled = true;
+      form.classList.add('submitting');
+
+      // 2) after a brief "processing" beat, fade the form out and reveal success
+      setTimeout(function () {
+        form.classList.add('done');
+        setTimeout(function () {
+          success.classList.add('show');
+        }, 260);
+      }, 1100);
     });
 
     // Register link scrolls to the very top of the page
