@@ -7,13 +7,24 @@
  * SETUP (one time):
  *  1. Open the Google Sheet, then: Extensions ▸ Apps Script.
  *     Delete any code and paste this whole file in. Save.
- *  2. (Optional) In the editor, select "setupSheet" in the function
- *     dropdown and click Run once to format the header immediately.
- *  3. Click Deploy ▸ New deployment ▸ type "Web app".
+ *  2. Restrict permissions to THIS sheet only (recommended):
+ *       - Project Settings (gear icon) ▸ tick
+ *         "Show appsscript.json manifest file in editor".
+ *       - Open appsscript.json and replace its contents with the
+ *         appsscript.json from this repo. Save.
+ *     This makes the consent screen grant access to ONLY this
+ *     spreadsheet (scope: spreadsheets.currentonly) instead of all
+ *     of your spreadsheets.
+ *  3. (Optional) Select "setupSheet" in the function dropdown and
+ *     click Run once to format the header immediately.
+ *  4. Click Deploy ▸ New deployment ▸ type "Web app".
  *       - Execute as: Me
  *       - Who has access: Anyone
+ *     (Anyone is required so the public form can post. The endpoint
+ *     only runs doPost, which can ONLY append a row — it cannot read
+ *     or delete anything.)
  *     Click Deploy and authorise. Copy the "Web app URL".
- *  4. Paste that URL into index.html where it says SHEET_ENDPOINT.
+ *  5. Paste that URL into index.html where it says SHEET_ENDPOINT.
  *
  * To use a different sheet/tab, change SHEET_NAME.
  */
@@ -36,18 +47,25 @@ function doPost(e) {
       return ok({ ignored: true });
     }
 
+    // Lightweight validation: require a plausible email and cap field
+    // sizes so a bad actor can't bloat the sheet with huge payloads.
+    var email = clean_(data.email, 120);
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      return ok({ rejected: 'invalid email' });
+    }
+
     var sheet = getSheet_();
     formatHeader_(sheet);
 
     sheet.appendRow([
       new Date(),
-      data.firstName || '',
-      data.lastName  || '',
-      data.email     || '',
-      data.bodyshop  || '',
-      data.state     || '',
-      data.city      || '',
-      data.zip       || '',
+      clean_(data.firstName, 80),
+      clean_(data.lastName,  80),
+      email,
+      clean_(data.bodyshop,  120),
+      clean_(data.state,     40),
+      clean_(data.city,      80),
+      clean_(data.zip,       12),
       data.confirm ? 'Yes' : 'No',
       data.consent ? 'Yes' : 'No'
     ]);
@@ -63,6 +81,11 @@ function doPost(e) {
 /** Run this once from the editor to format the header straight away. */
 function setupSheet() {
   formatHeader_(getSheet_());
+}
+
+/** Trim a value to a string and cap its length. */
+function clean_(v, max) {
+  return String(v == null ? '' : v).trim().slice(0, max);
 }
 
 function getSheet_() {
