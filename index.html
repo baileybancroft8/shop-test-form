@@ -672,6 +672,9 @@
       <p class="sub">Complete the form below to register your interest.</p>
 
       <form id="signup-form" novalidate>
+        <!-- honeypot: hidden from people, often filled by bots -->
+        <input type="text" id="company" name="company" tabindex="-1" autocomplete="off"
+               aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" />
         <div class="row">
           <div class="field">
             <label for="first-name">First Name <span class="req">*</span></label>
@@ -829,6 +832,10 @@
   </footer>
 
   <script>
+    // Paste your Google Apps Script Web App URL between the quotes below.
+    // Until then, the form still works as a demo but won't save anywhere.
+    const SHEET_ENDPOINT = '';
+
     const form = document.getElementById('signup-form');
     const success = document.getElementById('success');
 
@@ -908,7 +915,29 @@
       btn.disabled = true;
       form.classList.add('submitting');
 
-      // 2) after a brief "processing" beat, fade the form out and reveal success
+      // 2) send the submission to the Google Sheet (fire-and-forget)
+      const payload = {
+        firstName: document.getElementById('first-name').value.trim(),
+        lastName:  document.getElementById('last-name').value.trim(),
+        email:     document.getElementById('email').value.trim(),
+        bodyshop:  document.getElementById('bodyshop').value.trim(),
+        state:     hidden.value,
+        city:      document.getElementById('city').value.trim(),
+        zip:       document.getElementById('zip').value.trim(),
+        confirm:   document.getElementById('confirm').checked,
+        consent:   document.getElementById('consent').checked,
+        company:   document.getElementById('company').value // honeypot
+      };
+      if (SHEET_ENDPOINT) {
+        fetch(SHEET_ENDPOINT, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        }).catch(function () { /* ignore network errors in this PoC */ });
+      }
+
+      // 3) after a brief "processing" beat, fade the form out and reveal success
       setTimeout(function () {
         form.classList.add('done');
         setTimeout(function () {
