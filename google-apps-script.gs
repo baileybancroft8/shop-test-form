@@ -30,7 +30,7 @@
  */
 
 var SHEET_NAME = '';            // blank = first/active sheet
-var NUM_COLS   = 10;            // number of columns in the table
+var NUM_COLS   = 9;             // number of columns in the table
 
 var HEADER_BG   = '#202124';    // dark header background
 var HEADER_TEXT = '#ffffff';    // white header text
@@ -59,15 +59,14 @@ function doPost(e) {
 
     sheet.appendRow([
       new Date(),
+      clean_(data.bodyshop,  120),
       clean_(data.firstName, 80),
       clean_(data.lastName,  80),
       email,
-      clean_(data.bodyshop,  120),
       clean_(data.state,     40),
-      clean_(data.city,      80),
-      clean_(data.zip,       12),
-      data.confirm ? 'Yes' : 'No',
-      data.consent ? 'Yes' : 'No'
+      clean_(data.oem,       400),   // OEM certifications (comma-separated)
+      clean_(data.drp,       400),   // DRP programs (comma-separated)
+      data.confirm ? 'Yes' : 'No'
     ]);
 
     styleRow_(sheet, sheet.getLastRow());
@@ -110,6 +109,13 @@ function getSheet_() {
 /** Bold, dark, frozen, easy-to-read header row. */
 function formatHeader_(sheet) {
   var header = sheet.getRange(1, 1, 1, NUM_COLS);
+  // Write the column labels (only if the header row is still empty).
+  if (!String(sheet.getRange(1, 1).getValue()).trim()) {
+    header.setValues([[
+      'Submitted', 'Bodyshop', 'First Name', 'Last Name', 'Email',
+      'State', 'OEM Certifications', 'DRP Programs', 'Confirmed'
+    ]]);
+  }
   header
     .setBackground(HEADER_BG)
     .setFontColor(HEADER_TEXT)
@@ -122,7 +128,7 @@ function formatHeader_(sheet) {
   sheet.setFrozenRows(1);
 
   // Reasonable starting column widths for legibility.
-  var widths = [150, 110, 110, 220, 220, 120, 130, 90, 150, 130];
+  var widths = [150, 220, 110, 110, 230, 110, 260, 260, 110];
   for (var i = 0; i < widths.length; i++) {
     sheet.setColumnWidth(i + 1, widths[i]);
   }

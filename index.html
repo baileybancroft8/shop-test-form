@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mopar Connected Collision Program - Register Your Interest</title>
+  <title>Mopar Connected Collision Program — Shop Certifications</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -95,12 +95,13 @@
       display: grid;
       grid-template-columns: 1.25fr 0.85fr;
       gap: 80px;
-      align-items: center;
+      align-items: start;
       max-width: 1440px;
       min-height: calc(100vh - 96px);
       margin: 0 auto;
       padding: 72px 28px;
     }
+    .hero-left { position: sticky; top: 110px; }
 
     .hero-left .eyebrow {
       font-size: 12px;
@@ -373,6 +374,53 @@
       cursor: pointer;
     }
 
+    /* ---------- Certification checkbox groups ---------- */
+    .cert-group { margin-bottom: 22px; }
+    .cert-group .glabel {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      color: #3a3a3c;
+      margin-bottom: 4px;
+    }
+    .cert-group .ghint { font-size: 12px; color: var(--gray); margin-bottom: 13px; }
+    .cert-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 11px 16px; }
+    .cert-item { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .cert-item input {
+      appearance: none;
+      -webkit-appearance: none;
+      flex: 0 0 19px;
+      width: 19px;
+      height: 19px;
+      border: 1.5px solid rgba(0,0,0,0.20);
+      border-radius: 6px;
+      background: rgba(247,248,250,0.8);
+      cursor: pointer;
+      position: relative;
+      transition: background .2s, border-color .2s, box-shadow .2s, transform .12s;
+    }
+    .cert-item input:hover { border-color: rgba(0,0,0,0.32); }
+    .cert-item input:checked {
+      background: linear-gradient(180deg, #5a96f6, var(--blue));
+      border-color: var(--blue);
+      box-shadow: 0 2px 6px -1px rgba(66,132,244,0.5);
+    }
+    .cert-item input:active { transform: scale(0.92); }
+    .cert-item input:checked::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 4.5px;
+      height: 8px;
+      border: solid #fff;
+      border-width: 0 2px 2px 0;
+      transform: translate(-50%, -58%) rotate(45deg);
+    }
+    .cert-item span { font-size: 13.5px; color: #48484a; }
+    .cert-group.invalid .glabel { color: var(--red); }
+
     /* ---------- Submit ---------- */
     .submit-btn {
       width: 100%;
@@ -602,7 +650,7 @@
         min-height: 0;
         padding: 48px 28px 64px;
       }
-      .hero-left { max-width: 640px; margin: 0 auto; width: 100%; }
+      .hero-left { max-width: 640px; margin: 0 auto; width: 100%; position: static; top: auto; }
       .hero-left p { max-width: none; }
       .hero-image { max-width: 560px; }
       /* allow each headline line to wrap naturally, but keep them on separate lines */
@@ -657,19 +705,19 @@
 
   <main class="hero">
     <div class="hero-left">
-      <div class="eyebrow">Register Your Interest</div>
-      <h1><span class="h1-line1">You're Invited! Register Your Interest Today</span><span class="h1-line2">Mopar Connected Collision Program</span></h1>
+      <div class="eyebrow">Shop Certifications</div>
+      <h1><span class="h1-line1">Confirm Your Shop's Certifications</span><span class="h1-line2">Mopar Connected Collision Program</span></h1>
       <p>
-        Fill out this form to register and receive updates on the
-        program launch.
+        Tell us which OEM certifications and Direct Repair Programs your
+        shop holds, so we can match you to the right collision work.
       </p>
       <img class="hero-image" src="repair-network.webp" alt="Repair network of collision repair shops" />
     </div>
 
     <div class="form-shell" id="register">
     <div class="form-card">
-      <h2>Shop Registration</h2>
-      <p class="sub">Complete the form below to register your interest.</p>
+      <h2>Shop Certifications</h2>
+      <p class="sub">Confirm the OEM certifications and Direct Repair Programs your shop holds.</p>
 
       <form id="signup-form" novalidate>
         <!-- honeypot: hidden from people, often filled by bots -->
@@ -696,58 +744,83 @@
           <input type="text" id="bodyshop" name="bodyshop" required />
         </div>
 
-        <div class="row-3">
-          <div class="field">
-            <label id="state-label">State <span class="req">*</span></label>
-            <div class="select" id="state-select">
-              <button type="button" class="select-trigger placeholder" id="state-trigger"
-                      aria-haspopup="listbox" aria-expanded="false" aria-labelledby="state-label state-trigger">
-                <span class="select-value">Select</span>
-                <svg class="select-chevron" viewBox="0 0 12 8" aria-hidden="true">
-                  <path fill="none" stroke="#6a6a6e" stroke-width="1.6" stroke-linecap="round"
-                        stroke-linejoin="round" d="M1 1.5l5 5 5-5" />
-                </svg>
-              </button>
-              <ul class="select-panel below" role="listbox" id="state-panel" aria-labelledby="state-label">
-                <li role="option" data-value="Texas">Texas</li>
-                <li role="option" data-value="Florida">Florida</li>
-                <li role="option" data-value="Georgia">Georgia</li>
-                <li role="option" data-value="North Carolina">North Carolina</li>
-                <li role="option" data-value="Ohio">Ohio</li>
-                <li role="option" data-value="Pennsylvania">Pennsylvania</li>
-              </ul>
-              <input type="hidden" name="state" id="state-input" />
-            </div>
+        <div class="field">
+          <label id="state-label">State <span class="req">*</span></label>
+          <div class="select" id="state-select">
+            <button type="button" class="select-trigger placeholder" id="state-trigger"
+                    aria-haspopup="listbox" aria-expanded="false" aria-labelledby="state-label state-trigger">
+              <span class="select-value">Select</span>
+              <svg class="select-chevron" viewBox="0 0 12 8" aria-hidden="true">
+                <path fill="none" stroke="#6a6a6e" stroke-width="1.6" stroke-linecap="round"
+                      stroke-linejoin="round" d="M1 1.5l5 5 5-5" />
+              </svg>
+            </button>
+            <ul class="select-panel below" role="listbox" id="state-panel" aria-labelledby="state-label">
+              <li role="option" data-value="Texas">Texas</li>
+              <li role="option" data-value="Florida">Florida</li>
+              <li role="option" data-value="Georgia">Georgia</li>
+              <li role="option" data-value="North Carolina">North Carolina</li>
+              <li role="option" data-value="Ohio">Ohio</li>
+              <li role="option" data-value="Pennsylvania">Pennsylvania</li>
+            </ul>
+            <input type="hidden" name="state" id="state-input" />
           </div>
-          <div class="field">
-            <label for="city">City <span class="req">*</span></label>
-            <input type="text" id="city" name="city" autocomplete="address-level2" required />
+        </div>
+
+        <div class="cert-group" id="oem-group">
+          <span class="glabel">OEM Certifications <span class="req">*</span></span>
+          <p class="ghint">Select every manufacturer your shop is currently certified to repair.</p>
+          <div class="cert-grid">
+            <label class="cert-item"><input type="checkbox" name="oem" value="Chrysler" /><span>Chrysler</span></label>
+            <label class="cert-item"><input type="checkbox" name="oem" value="Jeep" /><span>Jeep</span></label>
+            <label class="cert-item"><input type="checkbox" name="oem" value="Dodge" /><span>Dodge</span></label>
+            <label class="cert-item"><input type="checkbox" name="oem" value="RAM" /><span>RAM</span></label>
+            <label class="cert-item"><input type="checkbox" name="oem" value="Fiat" /><span>Fiat</span></label>
+            <label class="cert-item"><input type="checkbox" name="oem" value="Ford / Lincoln" /><span>Ford / Lincoln</span></label>
+            <label class="cert-item"><input type="checkbox" name="oem" value="Chevrolet / GM" /><span>Chevrolet / GM</span></label>
+            <label class="cert-item"><input type="checkbox" name="oem" value="Honda / Acura" /><span>Honda / Acura</span></label>
+            <label class="cert-item"><input type="checkbox" name="oem" value="Toyota / Lexus" /><span>Toyota / Lexus</span></label>
+            <label class="cert-item"><input type="checkbox" name="oem" value="Nissan / INFINITI" /><span>Nissan / INFINITI</span></label>
+            <label class="cert-item"><input type="checkbox" name="oem" value="Hyundai" /><span>Hyundai</span></label>
+            <label class="cert-item"><input type="checkbox" name="oem" value="Kia" /><span>Kia</span></label>
+            <label class="cert-item"><input type="checkbox" name="oem" value="Subaru" /><span>Subaru</span></label>
+            <label class="cert-item"><input type="checkbox" name="oem" value="Volkswagen / Audi" /><span>Volkswagen / Audi</span></label>
+            <label class="cert-item"><input type="checkbox" name="oem" value="BMW / MINI" /><span>BMW / MINI</span></label>
+            <label class="cert-item"><input type="checkbox" name="oem" value="Mercedes-Benz" /><span>Mercedes-Benz</span></label>
+            <label class="cert-item"><input type="checkbox" name="oem" value="Volvo" /><span>Volvo</span></label>
+            <label class="cert-item"><input type="checkbox" name="oem" value="Tesla" /><span>Tesla</span></label>
           </div>
-          <div class="field">
-            <label for="zip">Zip <span class="req">*</span></label>
-            <input type="text" id="zip" name="zip" inputmode="numeric" maxlength="10"
-                   placeholder="90001" autocomplete="postal-code" required />
+        </div>
+
+        <div class="cert-group">
+          <span class="glabel">Direct Repair Programs (DRP)</span>
+          <p class="ghint">Select every insurer Direct Repair Program your shop participates in.</p>
+          <div class="cert-grid">
+            <label class="cert-item"><input type="checkbox" name="drp" value="State Farm" /><span>State Farm</span></label>
+            <label class="cert-item"><input type="checkbox" name="drp" value="GEICO" /><span>GEICO</span></label>
+            <label class="cert-item"><input type="checkbox" name="drp" value="Allstate" /><span>Allstate</span></label>
+            <label class="cert-item"><input type="checkbox" name="drp" value="Progressive" /><span>Progressive</span></label>
+            <label class="cert-item"><input type="checkbox" name="drp" value="USAA" /><span>USAA</span></label>
+            <label class="cert-item"><input type="checkbox" name="drp" value="Farmers" /><span>Farmers</span></label>
+            <label class="cert-item"><input type="checkbox" name="drp" value="Liberty Mutual" /><span>Liberty Mutual</span></label>
+            <label class="cert-item"><input type="checkbox" name="drp" value="Nationwide" /><span>Nationwide</span></label>
+            <label class="cert-item"><input type="checkbox" name="drp" value="Travelers" /><span>Travelers</span></label>
+            <label class="cert-item"><input type="checkbox" name="drp" value="American Family" /><span>American Family</span></label>
+            <label class="cert-item"><input type="checkbox" name="drp" value="Erie" /><span>Erie</span></label>
+            <label class="cert-item"><input type="checkbox" name="drp" value="The Hartford" /><span>The Hartford</span></label>
           </div>
         </div>
 
         <div class="check">
           <input type="checkbox" id="confirm" name="confirm" required />
           <label for="confirm">
-            I hereby confirm that the shop location given is a member of the
-            Mopar-certified network. <span class="req">*</span>
-          </label>
-        </div>
-
-        <div class="check">
-          <input type="checkbox" id="consent" name="consent" required />
-          <label for="consent">
-            By clicking &lsquo;Submit&rsquo; I consent to receive updates on the
-            Mopar Connected Collision Program PoC. <span class="req">*</span>
+            I confirm the certifications selected above are current and
+            accurate for this shop. <span class="req">*</span>
           </label>
         </div>
 
         <button type="submit" class="submit-btn" id="submit-btn">
-          <span class="btn-label">Submit</span>
+          <span class="btn-label">Submit Certifications</span>
           <span class="btn-spinner" aria-hidden="true"></span>
         </button>
       </form>
@@ -759,8 +832,8 @@
         </svg>
         <div class="success-title">Thank you!</div>
         <div class="success-text">
-          Your interest has been registered. We&rsquo;ll be in touch shortly with
-          next steps.
+          Your certifications have been submitted. We&rsquo;ll verify them and
+          confirm your network status shortly.
         </div>
       </div>
     </div>
@@ -773,53 +846,56 @@
 
       <div class="faq-item">
         <button type="button" class="faq-q">
-          What is the Mopar Connected Collision Program?
+          What is this form for?
           <span class="faq-icon" aria-hidden="true"></span>
         </button>
         <div class="faq-a">
           <div class="faq-a-inner">
-            The Mopar Connected Collision Program is a proof-of-concept initiative
-            connecting Mopar-certified collision repair shops with Axitech's
-            platform to streamline repairs and improve customer outcomes.
+            It records the OEM certifications and insurer Direct Repair Programs
+            your shop holds, so we can match you to the collision work you're
+            eligible for under the Mopar Connected Collision Program.
           </div>
         </div>
       </div>
 
       <div class="faq-item">
         <button type="button" class="faq-q">
-          Who is eligible to register?
+          Which certifications should I select?
           <span class="faq-icon" aria-hidden="true"></span>
         </button>
         <div class="faq-a">
           <div class="faq-a-inner">
-            Any collision repair shop that is a current member of the
-            Mopar-certified network is eligible to register their interest.
+            Select every OEM your shop is currently certified to repair, and
+            every insurer Direct Repair Program (DRP) you actively participate
+            in. Only choose certifications that are current.
           </div>
         </div>
       </div>
 
       <div class="faq-item">
         <button type="button" class="faq-q">
-          Is there any cost to participate?
+          What if a certification isn't listed?
           <span class="faq-icon" aria-hidden="true"></span>
         </button>
         <div class="faq-a">
           <div class="faq-a-inner">
-            No. Registering your interest is completely free. This form simply
-            lets us keep you updated on the program launch.
+            The list covers the most common programs in the network. If you hold
+            one that isn't shown, submit what applies and let us know — we'll add
+            it to your shop's record.
           </div>
         </div>
       </div>
 
       <div class="faq-item">
         <button type="button" class="faq-q">
-          What happens after I register?
+          What happens after I submit?
           <span class="faq-icon" aria-hidden="true"></span>
         </button>
         <div class="faq-a">
           <div class="faq-a-inner">
-            Once you register, our team will be in touch with details on next
-            steps and updates on the program as it progresses.
+            Your selections are recorded against your shop and verified by our
+            team. Confirmed certifications determine which programmes and work
+            you're eligible for.
           </div>
         </div>
       </div>
@@ -884,6 +960,11 @@
     trigger.addEventListener('click', toggleMenu);
     options.forEach(li => li.addEventListener('click', () => selectOption(li)));
 
+    // clear the OEM "required" highlight as soon as one is ticked
+    document.querySelectorAll('input[name="oem"]').forEach(c =>
+      c.addEventListener('change', () =>
+        document.getElementById('oem-group').classList.remove('invalid')));
+
     // Close on outside click and on Escape; reposition while open on resize/scroll
     document.addEventListener('click', e => {
       if (!selectEl.contains(e.target)) closeMenu();
@@ -908,6 +989,14 @@
         return;
       }
 
+      // Require at least one OEM certification
+      const oemGroup = document.getElementById('oem-group');
+      if (document.querySelectorAll('input[name="oem"]:checked').length === 0) {
+        oemGroup.classList.add('invalid');
+        oemGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
       const btn = document.getElementById('submit-btn');
 
       // 1) show spinner / loading state
@@ -916,16 +1005,17 @@
       form.classList.add('submitting');
 
       // 2) send the submission to the Google Sheet (fire-and-forget)
+      const oem = Array.from(document.querySelectorAll('input[name="oem"]:checked')).map(c => c.value);
+      const drp = Array.from(document.querySelectorAll('input[name="drp"]:checked')).map(c => c.value);
       const payload = {
         firstName: document.getElementById('first-name').value.trim(),
         lastName:  document.getElementById('last-name').value.trim(),
         email:     document.getElementById('email').value.trim(),
         bodyshop:  document.getElementById('bodyshop').value.trim(),
         state:     hidden.value,
-        city:      document.getElementById('city').value.trim(),
-        zip:       document.getElementById('zip').value.trim(),
+        oem:       oem.join(', '),
+        drp:       drp.join(', '),
         confirm:   document.getElementById('confirm').checked,
-        consent:   document.getElementById('consent').checked,
         company:   document.getElementById('company').value // honeypot
       };
       if (SHEET_ENDPOINT) {
